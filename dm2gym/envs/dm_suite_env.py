@@ -26,7 +26,7 @@ def convert_dm_control_to_gym_space(dm_control_space):
 
 
 class DMSuiteEnv(gym.Env):
-    def __init__(self, domain_name, task_name, task_kwargs=None, environment_kwargs=None, visualize_reward=False):
+    def __init__(self, domain_name, task_name, task_kwargs=None, environment_kwargs={'flat_observation': True}, visualize_reward=False):
         self.env = suite.load(domain_name, 
                               task_name, 
                               task_kwargs=task_kwargs, 
@@ -44,7 +44,7 @@ class DMSuiteEnv(gym.Env):
     
     def step(self, action):
         timestep = self.env.step(action)
-        observation = timestep.observation
+        observation = timestep.observation['observations']
         reward = timestep.reward
         done = timestep.last()
         info = {}
@@ -52,7 +52,7 @@ class DMSuiteEnv(gym.Env):
     
     def reset(self):
         timestep = self.env.reset()
-        return timestep.observation
+        return timestep.observation['observations']
     
     def render(self, mode='human', **kwargs):
         if 'camera_id' not in kwargs:
